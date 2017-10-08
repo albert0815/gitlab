@@ -1,0 +1,15 @@
+web:
+  image: 'gitlab/gitlab-ce:10.0.3'
+  restart: always
+  hostname: 'gitlab.example.com'
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      external_url 'http://alberts-mini.fritz.box:60700'
+  ports:
+    - '60700:60700'
+    - '60722:22'
+  volumes:
+    - '/docker-volumes/gitlab/config:/etc/gitlab'
+    - '/docker-volumes/gitlab/logs:/var/log/gitlab'
+    - '/docker-volumes/gitlab/data:/var/opt/gitlab'
+    - '/docker-volumes/backup:/backup'
