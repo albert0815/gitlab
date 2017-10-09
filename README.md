@@ -30,9 +30,4 @@ cd gitlab
 ./setup-gitlab.sh
 ```
 
-as a last step the runner is started. after startup you need to change the config of the runner in /docker-volumes/gitlab-runner/config/config.toml
-```
-volumes = ["/Volumes/FRITZ.NAS/PI-239-USB2-0Drive-01/gitlab-backup:/backup", "/var/run/docker.sock:/var/run/docker.sock", "/cache"]
-```
-
 now you should be able to deploy images with gitlab
