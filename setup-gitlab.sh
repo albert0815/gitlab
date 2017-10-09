@@ -8,10 +8,10 @@ backup_dir=/Volumes/FRITZ.NAS/PI-239-USB2-0Drive-01/gitlab-backup
 
 
 rm -rf /docker-volumes/*
-cp -rf $backup_dir/docker-volumes/* /docker-volumes
+cp -a $backup_dir/docker-volumes/* /docker-volumes
 ln -s $backup_dir /docker-volumes/backup
 docker stop gitlab && docker rm gitlab
-
+docker stop gitlab-runner && docker rm gitlab-runner
 
 echo "starting gitlab docker image"
 docker run --detach \
@@ -57,5 +57,9 @@ docker run -d --name gitlab-runner --restart always \
   -v /docker-volumes/gitlab-runner/config:/etc/gitlab-runner \
   -v /var/run/docker.sock:/var/run/docker.sock \
   gitlab/gitlab-runner:v10.0.2
-  
-echo "you need to register the runner now: docker exec -it gitlab-runner gitlab-runner register. after registration you need to change volumes config of the runner."
+ 
+echo "fixing rights of private keys"
+
+chmod 600 /docker-volumes/gitlab/config/ssh_host_ecdsa_key /docker-volumes/gitlab/config/ssh_host_ed25519_key /docker-volumes/gitlab/config/ssh_host_rsa_key
+
+echo "done, everything should work now" 
