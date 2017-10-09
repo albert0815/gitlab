@@ -15,9 +15,7 @@ docker stop gitlab-runner && docker rm gitlab-runner
 
 echo "starting gitlab docker image"
 docker run --detach \
-    --hostname alberts-mini.fritz.box \
-    --env GITLAB_OMNIBUS_CONFIG="external_url 'http://alberts-mini.fritz.box:60700'; gitlab_rails['gitlab_shell_ssh_port'] = 60722" \
-    --publish 60700:60700 --publish 60722:22 \
+    --publish 60722:22 \
     --name gitlab \
     --restart always \
     --volume /docker-volumes/gitlab/config:/etc/gitlab \
