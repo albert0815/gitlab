@@ -60,4 +60,27 @@ echo "fixing rights of private keys"
 
 chmod 600 /docker-volumes/gitlab/config/ssh_host_ecdsa_key /docker-volumes/gitlab/config/ssh_host_ed25519_key /docker-volumes/gitlab/config/ssh_host_rsa_key
 
+echo "now deploying the nginx"
+docker stop web-server && docker rm web-server 
+
+docker network create --driver bridge web || true
+
+docker network connect web gitlab || true
+docker network connect web gitlab-runner || true
+docker network connect web passbolt-app || true
+
+
+echo "building"
+docker build -t web-server nginx
+echo "starting web server"
+docker run --detach \
+	--network=web \
+	--volume /docker-volumes/nginx/logs:/var/log/nginx \
+	--volume /docker-volumes/nginx/letsencrypt:/etc/letsencrypt \
+	--volume /docker-volumes/nginx/conf:/etc/nginx/conf.d \
+	--name web-server \
+	--publish 443:443 \
+	--publish 80:80 \
+	web-server
+
 echo "done, everything should work now" 

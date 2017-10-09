@@ -31,3 +31,6 @@ cd gitlab
 ```
 
 now you should be able to deploy images with gitlab
+
+# Certbot
+certbot certonly --webroot -w /usr/share/nginx/letsencrypt -d www.dirkpapenberg.de
