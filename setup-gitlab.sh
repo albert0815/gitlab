@@ -74,6 +74,7 @@ echo "building"
 docker build -t web-server nginx
 echo "starting web server"
 docker run --detach \
+	--restart always \
 	--network=web \
 	--volume /docker-volumes/nginx/logs:/var/log/nginx \
 	--volume /docker-volumes/nginx/letsencrypt:/etc/letsencrypt \
