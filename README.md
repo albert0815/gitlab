@@ -43,4 +43,10 @@ Gitlab won't come up in case `/docker-volumes/backup` is not available (e.g. bac
 
 
 # Certbot
+```bash
+docker exec -it web-server bash
 certbot certonly --webroot -w /usr/share/nginx/letsencrypt -d www.dirkpapenberg.de
+certbot certonly --webroot -w /usr/share/nginx/letsencrypt -d gitlab.dirkpapenberg.de
+certbot certonly --webroot -w /usr/share/nginx/letsencrypt -d passbolt.dirkpapenberg.de
+nginx -s reload
+```
