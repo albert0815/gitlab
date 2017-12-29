@@ -32,5 +32,15 @@ cd gitlab
 
 now you should be able to deploy images with gitlab
 
+# Getting started
+login to mac mini
+```bash
+docker ps #shows running docker containers, should be web server, gitlab, gitlab-runner, mysql, passbolt
+```
+
+# Known errors
+Gitlab won't come up in case `/docker-volumes/backup` is not available (e.g. backup hard drive not connected to fritz box).
+
+
 # Certbot
 certbot certonly --webroot -w /usr/share/nginx/letsencrypt -d www.dirkpapenberg.de
