@@ -4,25 +4,26 @@ echo "starting installation of gitlab"
 
 echo "removing old stuff"
 
-backup_dir=/Volumes/FRITZ.NAS/PI-239-USB2-0Drive-01/gitlab-backup
+backup_dir=/home/albert/windows-share/gitlab-backup
 
-
-rm -rf /docker-volumes/*
-cp -a $backup_dir/docker-volumes/* /docker-volumes
-ln -s $backup_dir /docker-volumes/backup
 docker stop gitlab && docker rm gitlab
 docker stop gitlab-runner && docker rm gitlab-runner
+
+sudo rm -rf /docker-volumes/*
+cp -a $backup_dir/docker-volumes/* /docker-volumes
+ln -s $backup_dir /docker-volumes/backup
 
 echo "starting gitlab docker image"
 docker run --detach \
     --publish 60722:22 \
+    --publish 60780:60780 \
     --name gitlab \
     --restart always \
     --volume /docker-volumes/gitlab/config:/etc/gitlab \
     --volume /docker-volumes/gitlab/logs:/var/log/gitlab \
     --volume /docker-volumes/gitlab/data:/var/opt/gitlab \
     --volume /docker-volumes/backup:/backup\
-    gitlab/gitlab-ce:10.0.3-ce.0
+    gitlab/gitlab-ce:10.6.3-ce.0
 
 echo "checking status of gitlab and waiting until it is healthy"
 status=`docker inspect --format='{{.State.Health.Status}}' gitlab`
@@ -37,7 +38,7 @@ echo "status is now $status, we will now restore the applications"
 
 gitlab_backup_dir=/docker-volumes/backup/gitlab
 backup_file=`ls -t $gitlab_backup_dir|head -1`
-cp $gitlab_backup_dir/$backup_file /docker-volumes/gitlab/data/backups
+docker cp $gitlab_backup_dir/$backup_file gitlab:/var/opt/gitlab/backups
 echo "using backup $gitlab_backup_dir$backup_file"
 
 echo "stopping unicorn and sidekiq"
@@ -54,34 +55,17 @@ echo "starting runner image"
 docker run -d --name gitlab-runner --restart always \
   -v /docker-volumes/gitlab-runner/config:/etc/gitlab-runner \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  gitlab/gitlab-runner:v10.0.2
+  gitlab/gitlab-runner:v10.6.0
  
 echo "fixing rights of private keys"
 
 chmod 600 /docker-volumes/gitlab/config/ssh_host_ecdsa_key /docker-volumes/gitlab/config/ssh_host_ed25519_key /docker-volumes/gitlab/config/ssh_host_rsa_key
 
-echo "now deploying the nginx"
-docker stop web-server && docker rm web-server 
+echo "creating network for gitlab and gitlab runner"
+docker network create --driver bridge gitlab-network || true
 
-docker network create --driver bridge web || true
+docker network connect gitlab-network gitlab-runner || true
+docker network connect gitlab-network gitlab || true
 
-docker network connect web gitlab || true
-docker network connect web gitlab-runner || true
-docker network connect web passbolt-app || true
-
-
-echo "building"
-docker build -t web-server nginx
-echo "starting web server"
-docker run --detach \
-	--restart always \
-	--network=web \
-	--volume /docker-volumes/nginx/logs:/var/log/nginx \
-	--volume /docker-volumes/nginx/letsencrypt:/etc/letsencrypt \
-	--volume /docker-volumes/nginx/conf:/etc/nginx/conf.d \
-	--name web-server \
-	--publish 443:443 \
-	--publish 80:80 \
-	web-server
 
 echo "done, everything should work now" 
