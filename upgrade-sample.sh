@@ -1,6 +1,6 @@
 # before starting the update please check the background migrations:
 docker exec -it gitlab bash
-gitlab-rails console production
+gitlab-rails runner -e production 'puts Gitlab::BackgroundMigration.remaining'
 
 puts Sidekiq::Queue.new("background_migration").size
 Sidekiq::ScheduledSet.new.select { |r| r.klass == 'BackgroundMigrationWorker' }.size
@@ -27,7 +27,7 @@ docker run --detach \
 docker run -d --name gitlab-runner --restart always \
   -v /docker-volumes/gitlab-runner/config:/etc/gitlab-runner \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  gitlab/gitlab-runner:v11.1.0
+  gitlab/gitlab-runner:v13.1.0
 
   
 docker network connect gitlab-network gitlab-runner || true
