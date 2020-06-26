@@ -45,7 +45,7 @@ echo "stopping unicorn and sidekiq"
 docker exec -it gitlab gitlab-ctl stop unicorn
 docker exec -it gitlab gitlab-ctl stop sidekiq 
 
-backup_version=`echo $backup_file|cut -c1-28`
+backup_version=`echo $backup_file|cut -c1-29`
 echo "executing restore with version $backup_version"
 docker exec -it gitlab gitlab-rake gitlab:backup:restore BACKUP=$backup_version
 echo "executing starting gitlab"
