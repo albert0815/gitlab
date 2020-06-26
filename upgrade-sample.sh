@@ -21,13 +21,13 @@ docker run --detach \
     --volume /docker-volumes/gitlab/logs:/var/log/gitlab \
     --volume /docker-volumes/gitlab/data:/var/opt/gitlab \
     --volume /docker-volumes/backup:/backup\
-    gitlab/gitlab-ce:12.10.6-ce.0
+    gitlab/gitlab-ce:13.1.1-ce.0
 
 	
 docker run -d --name gitlab-runner --restart always \
   -v /docker-volumes/gitlab-runner/config:/etc/gitlab-runner \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  gitlab/gitlab-runner:v12.10.3
+  gitlab/gitlab-runner:v11.1.0
 
   
 docker network connect gitlab-network gitlab-runner || true
