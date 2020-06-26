@@ -23,7 +23,7 @@ docker run --detach \
     --volume /docker-volumes/gitlab/logs:/var/log/gitlab \
     --volume /docker-volumes/gitlab/data:/var/opt/gitlab \
     --volume /docker-volumes/backup:/backup\
-    gitlab/gitlab-ce:10.6.3-ce.0
+    gitlab/gitlab-ce:10.8.7-ce.0
 
 echo "checking status of gitlab and waiting until it is healthy"
 status=`docker inspect --format='{{.State.Health.Status}}' gitlab`
@@ -55,7 +55,7 @@ echo "starting runner image"
 docker run -d --name gitlab-runner --restart always \
   -v /docker-volumes/gitlab-runner/config:/etc/gitlab-runner \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  gitlab/gitlab-runner:v10.6.0
+  gitlab/gitlab-runner:v10.8.2
  
 echo "fixing rights of private keys"
 
