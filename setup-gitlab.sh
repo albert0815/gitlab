@@ -51,7 +51,7 @@ docker exec -it gitlab gitlab-rake gitlab:backup:restore BACKUP=$backup_version
 echo "executing starting gitlab"
 docker exec -it gitlab gitlab-ctl start
 
-#now we need to restore gitlab.rb and gitlab-secrets.json first!
+#now we need to restore gitlab.rb and gitlab-secrets.json first and restart docker container gitlab
 
 echo "starting runner image"
 docker run -d --name gitlab-runner --restart always \
